@@ -30,7 +30,7 @@ public class UnitController : MonoBehaviour
         if (manager.currentFlowField == null) {Debug.Log("Null"); return; }
         foreach (Unit unit in unitsInGame) {
             Cell nodeBelow = manager.currentFlowField.GetCellFromWorldPos(unit.transform.position);
-            Vector3 moveDir = new Vector3(nodeBelow.bestDirection.Vector.x, 0, nodeBelow.bestDirection.Vector.y);
+            Vector3 moveDir = new Vector3(nodeBelow.bestDirection.x, 0, nodeBelow.bestDirection.y);
             unit.agent.Move(moveDir*0.15f);
             
             

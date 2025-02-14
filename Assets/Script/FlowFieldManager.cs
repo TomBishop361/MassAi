@@ -7,7 +7,7 @@ public class FlowFieldManager : MonoBehaviour
     public Vector2Int gridSize;
     public float cellRadius = 0.5f;
     public FlowField currentFlowField;
-    public GridDebug gridDebug;
+    
 
     public GameObject buildingPrefab;
 
@@ -21,7 +21,7 @@ public class FlowFieldManager : MonoBehaviour
     {
         currentFlowField = new FlowField(cellRadius, gridSize);
         currentFlowField.CreateGrid();
-        gridDebug.SetFlowField(currentFlowField);
+        
     }
     private void Start()
     {
@@ -38,14 +38,12 @@ public class FlowFieldManager : MonoBehaviour
 
         currentFlowField.CreateCostField();
         Cell destinationCell = currentFlowField.GetCellFromWorldPos(new Vector3(100, 0, 100));
-        //Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f);
-        //Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        //Cell destinationCell = currentFlowField.GetCellFromWorldPos(worldMousePos);
+        
         currentFlowField.CreateIntegrationField(destinationCell);
 
         currentFlowField.CreateFlowField();
 
-        gridDebug.DrawFlowField();
+        
     }
 
 
