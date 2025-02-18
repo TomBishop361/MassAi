@@ -14,9 +14,9 @@ public class FlowFieldVisualizer : MonoBehaviour
     private void OnDrawGizmos()
     {
         if(!displayDirectionArrows) return;
-        if (flowFieldManager.currentFlowField == null || flowFieldManager.currentFlowField.grid == null) return;
+        if (flowFieldManager.currentFlowField == null || flowFieldManager.currentFlowField.CurrentGrid == null) return;
         
-        foreach (Cell cell in flowFieldManager.currentFlowField.grid)
+        foreach (Cell cell in flowFieldManager.currentFlowField.CurrentGrid)
         {
             if (cell.bestDirection == GridDirection.None) continue;
 

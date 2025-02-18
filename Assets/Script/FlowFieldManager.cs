@@ -19,8 +19,8 @@ public class FlowFieldManager : MonoBehaviour
 
     private void InitializeFlowField()
     {
-        currentFlowField = new FlowField(cellRadius, gridSize);
-        currentFlowField.CreateGrid();
+        
+        
         
     }
     private void Start()
@@ -34,15 +34,11 @@ public class FlowFieldManager : MonoBehaviour
 
     public void LoadFlowField()
     {
-        InitializeFlowField();
-
-        currentFlowField.CreateCostField();
-        Cell destinationCell = currentFlowField.GetCellFromWorldPos(new Vector3(100, 0, 100));
+        //InitializeFlowField();c
+        currentFlowField = new FlowField(cellRadius, gridSize);
         
-        currentFlowField.CreateIntegrationField(destinationCell);
-
-        currentFlowField.CreateFlowField();
-
+        currentFlowField.CreateMainGrid(new Vector3(100, 0, 100));
+        
         
     }
 

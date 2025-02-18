@@ -1,16 +1,15 @@
-using System;
-using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
-using Unity.Entities.UniversalDelegates;
-using Unity.Collections;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
+using Unity.Cecil.Awesome;
 using UnityEngine.Rendering;
+using NUnit.Framework.Constraints;
+
 public class FlowField
 {
-    public Cell[,] grid { get; private set; }
+    public Cell[,] CurrentGrid;
+    public Cell[,] MainGrid;
     public Vector2 gridSize { get; private set; }
     public float cellRadius { get; private set; }
     public Cell destinationCell;
@@ -31,31 +30,74 @@ public class FlowField
     {
         
         secondaryInfluence.Add(influence);
-        secondaryTargets.Add(position);
-        floodFillInfluence(position,influence);
-
+        secondaryTargets.Add(position);        
+        // floodFillInfluence(position,influence);
+        Cell[,] miniGrid;
+        Vector2 posIndex = getCellIndexFromWorldPos(position);
+        Vector2 miniGridSize = new Vector2(influence * 2, influence * 2);
+        CreateGrid(out miniGrid, miniGridSize,new Vector2(posIndex.x - influence, posIndex.y - influence));
+        CreateCostField(miniGrid);        
+        CreateIntegrationField(miniGrid[influence,influence],miniGrid,miniGridSize);
+        CreateFlowField(miniGrid, miniGridSize);        
+        addGridLayer(miniGrid,position,influence);
 
     }
 
-    public void CreateGrid()
+   public void CreateMainGrid(Vector3 DestinationCell)
     {
-        grid = new Cell[(int)gridSize.x, (int)gridSize.y];
+        
+        CreateGrid(out CurrentGrid, gridSize, Vector2.zero);
+        destinationCell = GetCellFromWorldPos(DestinationCell);
+        CreateCostField(CurrentGrid);
+        CreateIntegrationField(destinationCell, CurrentGrid,gridSize);
+        CreateFlowField(CurrentGrid,gridSize);
+        
+        
+    }
 
-        for (int x = 0; x < gridSize.x; x++)
+    public void addGridLayer(Cell[,] minigrid, float3 position, int radius)
+    {
+        //Apply offset to position
+        Vector2 Pos = getCellIndexFromWorldPos(position) - new Vector2(radius,radius);
+        for (int x = 0; x < radius*2 ; x++)
+        {            
+            for (int y = 0; y < radius*2; y++)
+            {                
+                if (!isCellValid(Pos)) continue;
+                if (minigrid[x, y].cost != 255)
+                {
+                    CurrentGrid[(int)Pos.x, (int)Pos.y].bestDirection = minigrid[x, y].bestDirection;
+                }
+                Pos = Pos+ new Vector2(0, 1);
+            }
+            Pos = Pos+ new Vector2(1, -radius*2);
+        }
+    }
+
+
+
+    public void CreateGrid(out Cell[,] _grid, Vector2 _gridSize, Vector2 Offset)
+    {
+        _grid = new Cell[(int)_gridSize.x, (int)_gridSize.y];
+
+        for (int x = 0; x < _gridSize.x; x++)
         {
-            for (int y = 0; y < gridSize.y; y++)
+            for (int y = 0; y < _gridSize.y; y++)
             {
-                Vector3 worldPos = new Vector3(cellDiameter * x + cellRadius, 0, cellDiameter * y + cellRadius);
-                grid[x, y] = new Cell(worldPos, new Vector2(x, y));
+                Vector3 worldPos = new Vector3((cellDiameter * x + cellRadius) + Offset.x, 0, (cellDiameter * y + cellRadius)+Offset.y);
+                
+                _grid[x, y] = new Cell(worldPos, new Vector2(x, y));
             }
         }
     }
 
-    public void CreateCostField()
+
+    // need to add offset for 2nd targets so that overlap boxes are correctly indicating position of obstacles on the mini grid
+    public void CreateCostField(Cell[,] _grid)
     {
         Vector3 cellHalfExtents = Vector3.one * cellRadius;
         int terrainMask = LayerMask.GetMask("Impassible", "RoughTerrain");
-        foreach (Cell current in grid)
+        foreach (Cell current in _grid)
         {
             Collider[] obstacles = Physics.OverlapBox(current.worldPos, cellHalfExtents, Quaternion.identity, terrainMask);
             bool hasIncreasedCost = false;
@@ -75,7 +117,7 @@ public class FlowField
         }
     }
 
-    public void CreateIntegrationField(Cell _destinationCell)
+    public void CreateIntegrationField(Cell _destinationCell, Cell[,] _grid, Vector2 _gridSize)
     {
         destinationCell = _destinationCell;
 
@@ -90,7 +132,7 @@ public class FlowField
         while (cellsToCheck.Count > 0)
         {
             Cell current = cellsToCheck.Dequeue();
-            List<Cell> currentNeighbors = GetNeighborCells(current.gridIndex, GridDirection.CardinalDirections);
+            List<Cell> currentNeighbors = GetNeighborCells(current.gridIndex, GridDirection.CardinalDirections, _grid, _gridSize);
             foreach (Cell currentNeighbor in currentNeighbors)
             {
                 if (currentNeighbor.cost == byte.MaxValue) { continue; }
@@ -106,12 +148,13 @@ public class FlowField
 
 
     //Time to Optimise
-    public void CreateFlowField()
+    public void CreateFlowField(Cell[,] _grid, Vector2 _gridSize)
     {
         
-        foreach (Cell current in grid)
+        foreach (Cell current in _grid)
         {
-            List<Cell> currentNeighbors = GetNeighborCells(current.gridIndex, GridDirection.AllDirections);
+            
+            List<Cell> currentNeighbors = GetNeighborCells(current.gridIndex, GridDirection.AllDirections,_grid, _gridSize);
 
             int bestCost = current.bestCost;
 
@@ -129,51 +172,20 @@ public class FlowField
     }
 
 
-    public void floodFillInfluence(Vector3 Pos, int influenceRadius)
+    public bool isCellValid(Vector2 pos)
     {
-        Cell SecondaryTarget = GetCellFromWorldPos(Pos);
-        HashSet<Cell> visited = new HashSet<Cell>(); // O(1) lookup
-        Queue<Cell> cellsToCheck = new Queue<Cell>();
-        cellsToCheck.Enqueue(SecondaryTarget);
-        visited.Add(SecondaryTarget);
-
-        while (cellsToCheck.Count > 0)
-        {
-            Cell Current = cellsToCheck.Dequeue();
-            visited.Add(Current);
-            List<Cell> currentNeibours = GetNeighborCells(Current.gridIndex, GridDirection.AllDirections);
-            foreach (Cell currentNeighbor in currentNeibours)
-            {
-                if (currentNeighbor.cost == byte.MaxValue || visited.Contains(currentNeighbor)) continue;
-
-                float distSqr = math.distancesq(Pos, currentNeighbor.worldPos);
-                if ((int)distSqr <= influenceRadius * influenceRadius)
-                {
-                    float weight = 3 - (distSqr / influenceRadius);
-                    
-                    Vector2 dir = (Vector2)Current.bestDirection * (1 - weight) + ( SecondaryTarget.gridIndex - Current.gridIndex);
-
-                    dir = dir.normalized;
-                    
-                    Current.bestDirection = new Vector2(dir.x,dir.y);
-                    cellsToCheck.Enqueue(currentNeighbor);                    
-                    visited.Add(currentNeighbor);
-                }
-            }
-        }
-
+        if (pos.x < 0 || pos.x >= gridSize.x || pos.y < 0 || pos.y >= gridSize.y) return false;
+        else return true;
     }
 
-  
 
-
-    private List<Cell> GetNeighborCells(Vector2 nodeIndex, List<GridDirection> directions)
+    private List<Cell> GetNeighborCells(Vector2 nodeIndex, List<GridDirection> directions, Cell[,] _grid, Vector2 _gridSize)
     {
         List<Cell> neighborCells = new List<Cell>();
 
         foreach (Vector2 currentDirection in directions)
         {
-            Cell newNeighbor = GetCellAtRelativePos(nodeIndex, currentDirection);
+            Cell newNeighbor = GetCellAtRelativePos(nodeIndex, currentDirection, _grid, _gridSize);
             if (newNeighbor != null)
             {
                 neighborCells.Add(newNeighbor);
@@ -182,16 +194,17 @@ public class FlowField
         return neighborCells;
     }
 
-    private Cell GetCellAtRelativePos(Vector2 orignPos, Vector2 relativePos)
+
+    private Cell GetCellAtRelativePos(Vector2 orignPos, Vector2 relativePos, Cell[,] _grid, Vector2 _gridSize)
     {
         Vector2 finalPos = orignPos + relativePos;
 
-        if (finalPos.x < 0 || finalPos.x >= gridSize.x || finalPos.y < 0 || finalPos.y >= gridSize.y)
+        if (finalPos.x < 0 || finalPos.x >= _gridSize.x || finalPos.y < 0 || finalPos.y >= _gridSize.y)
         {
             return null;
         }
 
-        else { return grid[(int)finalPos.x, (int)finalPos.y]; }
+        else { return _grid[(int)finalPos.x, (int)finalPos.y]; }
     }
 
     public Cell GetCellFromWorldPos(Vector3 worldPos)
@@ -204,7 +217,21 @@ public class FlowField
 
         float x = Mathf.Clamp(Mathf.FloorToInt((gridSize.x) * percentX), 0, gridSize.x - 1);
         float y = Mathf.Clamp(Mathf.FloorToInt((gridSize.y) * percentY), 0, gridSize.y - 1);
-        return grid[(int)x, (int)y];
+        return CurrentGrid[(int)x, (int)y];
+    }
+
+    public Vector2 getCellIndexFromWorldPos(Vector3 worldPos)
+    {
+        float percentX = worldPos.x / (gridSize.x * cellDiameter);
+        float percentY = worldPos.z / (gridSize.y * cellDiameter);
+
+        percentX = Mathf.Clamp01(percentX);
+        percentY = Mathf.Clamp01(percentY);
+
+        float x = Mathf.Clamp(Mathf.FloorToInt((gridSize.x) * percentX), 0, gridSize.x - 1);
+        float y = Mathf.Clamp(Mathf.FloorToInt((gridSize.y) * percentY), 0, gridSize.y - 1);
+        Vector2 index = new Vector2((int)x, (int)y);
+        return index;
     }
 }
 
