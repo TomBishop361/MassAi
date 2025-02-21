@@ -17,12 +17,7 @@ public class FlowFieldManager : MonoBehaviour
         else Destroy(this);
     }
 
-    private void InitializeFlowField()
-    {
-        
-        
-        
-    }
+   
     private void Start()
     {
         LoadFlowField();
@@ -42,18 +37,23 @@ public class FlowFieldManager : MonoBehaviour
         
     }
 
+    public void buildingDestroyed()
+    {
+        currentFlowField.removeSecondaryTarget();
+    }
 
     private void createBuilding() {
 
-        Instantiate(buildingPrefab, new Vector3(UnityEngine.Random.Range(0, 199),0, UnityEngine.Random.Range(0, 199)),quaternion.identity);
+        Instantiate(buildingPrefab, new Vector3((int)UnityEngine.Random.Range(0, 199),0, (int)UnityEngine.Random.Range(0, 199)),quaternion.identity);
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
-        {
+        {//change to place building at mouse position
             createBuilding();
         }
+        //create 2nd input to select building and remove it 
     }
 
 

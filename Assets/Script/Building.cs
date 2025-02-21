@@ -9,4 +9,9 @@ public class Building : MonoBehaviour
         manager = FlowFieldManager.Instance;
         manager.AddSecondaryTarget(this.transform, influence);
     }
+
+    private void OnDestroy()
+    {
+        manager.buildingDestroyed();
+    }
 }
