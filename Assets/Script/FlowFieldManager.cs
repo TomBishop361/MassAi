@@ -21,6 +21,7 @@ public class FlowFieldManager : MonoBehaviour
     private void Start()
     {
         LoadFlowField();
+
     }
     public void AddSecondaryTarget(Transform pos, int influence)
     {
@@ -42,16 +43,22 @@ public class FlowFieldManager : MonoBehaviour
         currentFlowField.removeSecondaryTarget();
     }
 
-    private void createBuilding() {
+    private void createBuilding(Vector3 pos) {
 
-        Instantiate(buildingPrefab, new Vector3((int)UnityEngine.Random.Range(0, 199),0, (int)UnityEngine.Random.Range(0, 199)),quaternion.identity);
+        Instantiate(buildingPrefab, pos,quaternion.identity);
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
-        {//change to place building at mouse position
-            createBuilding();
+        {//change to place building at mouse position         
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit, float.MaxValue);
+            Debug.DrawRay(ray.origin, hit.point * 100);
+            createBuilding(hit.point);   
+            
         }
         //create 2nd input to select building and remove it 
     }
