@@ -7,12 +7,13 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class UnitController : MonoBehaviour
 {
     public FlowFieldManager manager;
     public static UnitController Instance;
     public List<Unit> unitsInGame;
-
+    public float speed = 0.15f;
 
     private void Awake()
     {
@@ -26,6 +27,14 @@ public class UnitController : MonoBehaviour
         unitsInGame.Add(Unit);
     }
 
+
+    public void EnableEnemies()
+    {
+        foreach (Unit unit in unitsInGame)
+        {
+            unit.gameObject.SetActive(true);
+        }
+    }
    
         public static Vector3 FindClosestNavMeshPosition(Vector3 position, float maxSearchRadius = 2f)
         {
@@ -36,12 +45,14 @@ public class UnitController : MonoBehaviour
             return position; 
         }
 
+   
 
     [BurstCompile]
     private void FixedUpdate()
     {
         if (manager.currentFlowField == null) {Debug.Log("Null"); return; }
         foreach (Unit unit in unitsInGame) {
+            if (!unit.gameObject.activeSelf) continue;
             Cell nodeBelow = manager.currentFlowField.GetCellFromWorldPos(unit.transform.position);
             //if is pushed into obstacle then it will follow direction of neighbour 
             if (nodeBelow.bestDirection == GridDirection.None)
@@ -49,11 +60,9 @@ public class UnitController : MonoBehaviour
                 nodeBelow = manager.currentFlowField.findNearestDirection(nodeBelow);
             }
             Vector3 moveDir = new Vector3(nodeBelow.bestDirection.x, 0, nodeBelow.bestDirection.y);
-            unit.agent.Move(moveDir*0.15f);
-
-           
+            unit.agent.Move(moveDir*speed);
             
-          
+            unit.transform.rotation = quaternion.LookRotation(moveDir, unit.transform.up);
         }
     }
 

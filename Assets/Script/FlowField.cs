@@ -1,9 +1,8 @@
 
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Collections;
 using Unity.Mathematics;
-using System;
-using Unity.VisualScripting;
+using UnityEngine;
 
 public class FlowField
 {
@@ -15,8 +14,8 @@ public class FlowField
 
     private float cellDiameter;
 
-    List<float3> secondaryTargets = new List<float3>();
-    List<int> secondaryInfluence = new List<int>();
+    List<Vector3> secondaryTargets = new List<Vector3>();
+    List<Cell[,]> secondaryInfluence = new List<Cell[,]>();
 
     public FlowField(float _cellRadius, Vector2 _gridSize)
     {
@@ -53,24 +52,24 @@ public class FlowField
     }
 
 
-    public void addSecondaryTarget(float3 position, int influence)
+    public void addSecondaryTarget(Vector3 position, int influence)
     {
-        secondaryInfluence.Add(influence);
+        
         secondaryTargets.Add(position);
 
         Cell[,] miniGrid;
         Vector2 posIndex = getCellIndexFromWorldPos(position);
         Vector2 miniGridSize = new Vector2(influence * 2, influence * 2);
-
         CreateGrid(out miniGrid, miniGridSize, new Vector2(posIndex.x - influence, posIndex.y - influence));
         CreateCostField(miniGrid);
         CreateIntegrationField(miniGrid[influence, influence], miniGrid, miniGridSize);
         CreateFlowField(miniGrid, miniGridSize);
         addGridLayer(miniGrid, position, influence);
+        secondaryInfluence.Add(miniGrid);
     }
 
     //Add weight that = 1-dist/radius
-    public void addGridLayer(Cell[,] minigrid, float3 position, int radius)
+    public void addGridLayer(Cell[,] minigrid, Vector3 position, int radius)
     {        
         Vector2 Pos = getCellIndexFromWorldPos(position) - new Vector2(radius,radius);
         for (int x = 0; x < radius*2 ; x++)
@@ -79,6 +78,7 @@ public class FlowField
             for (int y = 0; y < radius*2; y++)
             {
                 if (!isCellValid(Pos)) continue;
+
                 if (minigrid[x, y].cost != 255)
                 {
                     CurrentGrid[(int)Pos.x, (int)Pos.y].bestDirection = minigrid[x, y].bestDirection;    
@@ -90,12 +90,37 @@ public class FlowField
     }
 
 
-    public void removeSecondaryTarget()
+    public void removeSecondaryTarget(Vector3 position, int radius)
     {
+        Debug.Log("Remove Target Called");
+        int index = 0;
         //remove self from list of target
-        //create temp list of targets within double its influence radius
+        if (secondaryTargets.Contains(position))
+        {
+            index = secondaryTargets.IndexOf(position);
+            secondaryTargets.RemoveAt(index);
+        }
+
+        Debug.Log("uurghh");
         //iterate over grid in influence and restor to original grid.
+        for (int x = 0; x < secondaryTargets[index].x; x++)
+        {
+            for(int y = 0;y < secondaryTargets[index].y; y++)
+            {
+                Vector2 pos = getCellIndexFromWorldPos(position) - new Vector2(radius, radius);
+                CurrentGrid[(int)pos.x,(int)pos.y].bestDirection = MainGrid[(int)pos.x, (int)pos.y].bestDirection;
+            }
+        }
+        secondaryInfluence.RemoveAt(index);
         // Go through buildings within range and recalculate their flow
+        foreach(Vector3 target in secondaryTargets)
+        {
+            if((position-target).sqrMagnitude> 2*(radius * radius))
+            {
+                int targetIndex = secondaryTargets.IndexOf(target);
+                addGridLayer(secondaryInfluence[targetIndex], target, radius);
+            }
+        }        
     }
 
 
@@ -168,8 +193,6 @@ public class FlowField
         }
     }
 
-
-
     //Time to Optimise
     public void CreateFlowField(Cell[,] _grid, Vector2 _gridSize)
     {
@@ -193,7 +216,6 @@ public class FlowField
             
         }
     }
-
 
     public bool isCellValid(Vector2 pos)
     {
@@ -269,9 +291,6 @@ public class FlowField
     }
 }
 
-
-
-
  
 public class Cell
 {
@@ -281,6 +300,7 @@ public class Cell
     public ushort bestCost;
     public Vector2 bestDirection;
     public bool isInfluenced;
+    public float weight;
 
     public Cell(Vector3 _worldPos, Vector2 _gridIndex)
     {
