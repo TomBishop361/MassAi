@@ -1,5 +1,9 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
 
 public class BuildingManager : MonoBehaviour
@@ -13,6 +17,9 @@ public class BuildingManager : MonoBehaviour
     GameObject CurrentBuildGO;
     Building CurrentBuilding;
 
+    public GraphicRaycaster GRayCast;
+    public EventSystem _eventSystem;
+    PointerEventData m_PointerEventData;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,6 +28,7 @@ public class BuildingManager : MonoBehaviour
 
     public void Build( int buildingIndx)
     {
+        ClearCurrentBuilding();
         SelectBuilding = BuildingPrefabs[buildingIndx];
         CurrentBuildGO = Instantiate(SelectBuilding, Vector3.zero, Quaternion.identity);
         CurrentBuildGO.transform.eulerAngles += new Vector3(-90, 0, 0);
@@ -30,12 +38,22 @@ public class BuildingManager : MonoBehaviour
 
     private void createBuilding(Vector3 pos)
     {
-
         //GameObject Building =  Instantiate(SelectBuilding, pos, Quaternion.identity);
         CurrentBuildGO.transform.position = pos;
         CurrentBuilding.buildComplete();
+        CurrentBuildGO = null;
+        CurrentBuilding = null; 
     }
 
+    void ClearCurrentBuilding()
+    {
+        isBuilding = false;
+        if (CurrentBuildGO != null)
+        {
+            Destroy(CurrentBuildGO);
+            CurrentBuilding = null;
+        }
+    }
 
     private void Update()
     {
@@ -44,7 +62,13 @@ public class BuildingManager : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            
+
+            m_PointerEventData = new PointerEventData(_eventSystem);
+            m_PointerEventData.position = Input.mousePosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            GRayCast.Raycast(m_PointerEventData, results);
+            if (results.Count > 0) CurrentBuilding.IsValidLocation = false;
+
             Physics.Raycast(ray, out hit, float.MaxValue);
             Debug.DrawRay(ray.origin, hit.point * 100);
             Vector3 CellPos = manager.currentFlowField.GetCellFromWorldPos(hit.point).worldPos;
@@ -57,20 +81,13 @@ public class BuildingManager : MonoBehaviour
                 isBuilding = false;
             }
             
-        }
+        
         //create 2nd input to select building and remove it 
         if (Input.GetMouseButtonDown(1))
         {
-            isBuilding = false ;
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //RaycastHit hit;
-            //Physics.Raycast(ray, out hit, float.MaxValue);
-            //Debug.DrawRay(ray.origin, hit.point * 100);
-            //if (hit.transform.gameObject.tag == "Building")
-            //{
-            //    buildingDestroyed(transform, hit.transform.gameObject.GetComponent<Building>().influence);
-            //}
+            ClearCurrentBuilding();
 
+        }
         }
     }
 }
