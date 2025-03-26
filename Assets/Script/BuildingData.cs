@@ -7,20 +7,30 @@ public class BuildingData : ScriptableObject
 
     public string BuildingName;
 
+    public RecourseCost Cost;
+
+    public SecondRecourceCost SecondaryCost;
+
+    public Produces Produce;
+    
     public enum RecourseCost
     {
         Wood, Coin, Stone, Food
     }
+
+    
     public enum SecondRecourceCost
     {
         None, Wood, Coin, Stone, Food
     }
 
+    
     public enum Produces
     {
-        None, Food, Coin, Stone, Wood
+        None, Food, Coin, Stone, Wood, Population
     }
 
+    [Tooltip("set to 0 for flat one time increase")]
     public int productionSpeed;
 
 
