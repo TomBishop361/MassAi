@@ -59,16 +59,21 @@ public class Building : MonoBehaviour
         {
             PositionLastFrame = transform.position;
             
-            Debug.Log("Here");
             
-            Collider[] targetsInView = Physics.OverlapSphere(transform.position, _BuildingData.ResourceRange, TargetResource);
-            foreach (Collider target in targetsInView)
-            {
-                if (!Physics.Raycast(transform.position, target.transform.position, Vector3.Distance(transform.position, target.transform.position), ObstacleMask))
+            Collider[] targetsInView = new Collider[20];
+            int hitcount = Physics.OverlapSphereNonAlloc(transform.position, _BuildingData.ResourceRange,targetsInView, TargetResource);            
+            
+                foreach (Collider target in targetsInView)
                 {
-                    ResourceTargets.Add(target.gameObject);
+                    if (target != null)
+                    {
+                        if (!Physics.Raycast(transform.position, target.transform.position, Vector3.Distance(transform.position, target.transform.position), ObstacleMask))
+                        {
+                            ResourceTargets.Add(target.gameObject);
+                        }
+                    }
                 }
-            }
+            
         }
     }
 
@@ -93,38 +98,50 @@ public class Building : MonoBehaviour
 
     public void SpawnValidation()
     {
-         
-            int count = 0;
-            Collider[] hit = Physics.OverlapBox(transform.position, boxCollider.size * 0.5f,transform.rotation);
-            if (hit.Length > 0)
+
+        int count = 0;
+        Collider[] hit = new Collider[10];
+        Physics.OverlapBoxNonAlloc(transform.position, boxCollider.size * 0.5f, hit, transform.rotation);
+        if (hit.Length > 0)
+        {
+            foreach (Collider c in hit)
             {
-                foreach (Collider c in hit)
+                if (c != null)
                 {
+
+
                     if (c.gameObject.CompareTag("Building") || c.gameObject.CompareTag("Resource"))
                     {
                         if (c != boxCollider && IsValidLocation)
                         {
 
                             IsValidLocation = false;
-                            _Renderer.materials[1].SetColor("_OutlineColour", new Color(1, 0, 0));
+                            List<Material> materials = new List<Material>();
+                            _Renderer.GetMaterials(materials);
+                            materials[1].SetColor("_OutlineColour", new Color(1, 0, 0));
                         }
                         count++;
-                    }                  
-                    
+                    }
+
                 }
                 if (count == 1 && !IsValidLocation)
                 {
-                    _Renderer.materials[1].SetColor("_OutlineColour", new Color(0, 1, 0));
+                    List<Material> materials = new List<Material>();
+                    _Renderer.GetMaterials(materials);
+                    materials[1].SetColor("_OutlineColour", new Color(0, 1, 0));
                     IsValidLocation = true;
                 }
             }
-            
-        
+        }
+
+
     }
 
     public void buildComplete()
     {
-        _Renderer.materials[1].SetFloat("_IsBuilt", 1);
+        List<Material> materials = new List<Material>();
+        _Renderer.GetMaterials(materials);
+        materials[1].SetFloat("_IsBuilt", 1);
         isBuilt = true;
         healthBar.hideHealthBar();
         placeOnFlowField();

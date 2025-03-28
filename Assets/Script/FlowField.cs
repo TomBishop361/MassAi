@@ -91,8 +91,7 @@ public class FlowField
 
 
     public void removeSecondaryTarget(Vector3 position, int radius)
-    {
-        Debug.Log("Remove Target Called");
+    {        
         int index = 0;
         //remove self from list of target
         if (secondaryTargets.Contains(position))
@@ -144,13 +143,16 @@ public class FlowField
     public void CreateCostField(Cell[,] _grid)
     {
         Vector3 cellHalfExtents = Vector3.one * cellRadius;
-        int terrainMask = LayerMask.GetMask("Impassible", "RoughTerrain", "Mountain","Trees");
+        int terrainMask = LayerMask.GetMask("Impassible", "RoughTerrain", "Mountain","Wood");
         foreach (Cell current in _grid)
         {
-            Collider[] obstacles = Physics.OverlapBox(current.worldPos, cellHalfExtents, Quaternion.identity, terrainMask);
+
+            Collider[] obstacles = new Collider[5];
+            Physics.OverlapBoxNonAlloc(current.worldPos, cellHalfExtents,obstacles, Quaternion.identity, terrainMask);
             bool hasIncreasedCost = false;
             foreach (Collider col in obstacles)
             {
+                if(col == null) continue;
                 if (col.gameObject.layer == 8 || col.gameObject.layer == 7 || col.gameObject.layer == 14)
                 {
                     current.IncreaseCost(255);

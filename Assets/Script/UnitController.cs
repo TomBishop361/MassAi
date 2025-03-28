@@ -50,7 +50,7 @@ public class UnitController : MonoBehaviour
     [BurstCompile]
     private void FixedUpdate()
     {
-        if (manager.currentFlowField == null) {Debug.Log("Null"); return; }
+        if (manager.currentFlowField == null) {return; }
         foreach (Unit unit in unitsInGame) {
             if (!unit.gameObject.activeSelf) continue;
             Cell nodeBelow = manager.currentFlowField.GetCellFromWorldPos(unit.transform.position);

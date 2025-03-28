@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -8,34 +9,37 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Unit : MonoBehaviour
 {
-    public NavMeshAgent agent;
-    int _seed =0;
+    public NavMeshAgent agent;    
     public GameObject demoTarget;
 
-    private void Awake()
-    {
-        //if (_seed == 0)
-        //{
-        //    _seed = Random.Range(0,int.MaxValue);
-        //    Random.InitState(_seed);
-        //}
-    }
+    GameObject Target;
+    public List<GameObject> MeleeRangeCheck;
+    public List<GameObject> DetectionRange;
+
     
+    //TO DO write logic to detect near enemies and target them
+    // maybe only target player/ enemies if attacked
+    //attack building if in melee range. only attack player/player ally in melee range if is targeted first (targeted due to being attacked by )
+
+    private void Update()
+    {
+     if(MeleeRangeCheck.Count > 0)
+        {
+
+        }   
+    }
 
     private void Start()
     {
-        UnitController.Instance.AddUnitToList(this);
-      // transform.position = new Vector3(Random.Range(1, 50), 1, Random.Range(1, 50));
-      gameObject.SetActive(false);
-    }
+        UnitController.Instance.AddUnitToList(this);    
+        gameObject.SetActive(false);
+
+        MeleeRangeCheck = new List<GameObject>();
+         DetectionRange = new List<GameObject>();
+    }   
 
     
-    private void FixedUpdate()
-    {
-       transform.LookAt(demoTarget.transform.position);
-
-        
-    }
+    
 
    
 }
