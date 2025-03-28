@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Building
   - Enemy
+  - Resource
   layers:
   - Default
   - TransparentFX
@@ -14,14 +15,14 @@ TagManager:
   - Water
   - UI
   - 
-  - 
+  - Mountain
   - Impassible
   - RoughTerrain
   - Enemy
   - MiniMap
   - MiniMapIgnore
   - CineCamA
-  - 
+  - Wood
   - 
   - 
   - 

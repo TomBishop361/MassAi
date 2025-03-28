@@ -16,5 +16,6 @@ MonoBehaviour:
   BuildingName: TestBuilding
   Cost: 0
   SecondaryCost: 0
-  Produce: 0
-  productionSpeed: 0
+  Produce: 4
+  ResourceRange: 12
+  productionSpeed: 1

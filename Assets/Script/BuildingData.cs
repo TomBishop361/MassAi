@@ -12,6 +12,8 @@ public class BuildingData : ScriptableObject
     public SecondRecourceCost SecondaryCost;
 
     public Produces Produce;
+
+    public float ResourceRange;
     
     public enum RecourseCost
     {

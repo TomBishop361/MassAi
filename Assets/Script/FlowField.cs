@@ -101,8 +101,8 @@ public class FlowField
             secondaryTargets.RemoveAt(index);
         }
 
-        Debug.Log("uurghh");
-        //iterate over grid in influence and restor to original grid.
+        
+        //iterate over grid in influence and restore to original grid.
         for (int x = 0; x < secondaryTargets[index].x; x++)
         {
             for(int y = 0;y < secondaryTargets[index].y; y++)
@@ -144,14 +144,14 @@ public class FlowField
     public void CreateCostField(Cell[,] _grid)
     {
         Vector3 cellHalfExtents = Vector3.one * cellRadius;
-        int terrainMask = LayerMask.GetMask("Impassible", "RoughTerrain");
+        int terrainMask = LayerMask.GetMask("Impassible", "RoughTerrain", "Mountain","Trees");
         foreach (Cell current in _grid)
         {
             Collider[] obstacles = Physics.OverlapBox(current.worldPos, cellHalfExtents, Quaternion.identity, terrainMask);
             bool hasIncreasedCost = false;
             foreach (Collider col in obstacles)
             {
-                if (col.gameObject.layer == 8)
+                if (col.gameObject.layer == 8 || col.gameObject.layer == 7 || col.gameObject.layer == 14)
                 {
                     current.IncreaseCost(255);
                     continue;

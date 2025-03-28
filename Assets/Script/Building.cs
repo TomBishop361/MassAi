@@ -1,30 +1,75 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
+[RequireComponent(typeof(BuiltBuilding))]
 public class Building : MonoBehaviour
 {
+    // References to other components or managers
     public FlowFieldManager manager;
-    public int influence = 5;
-    public BuildingData _BuildingData;
-    int currentHealth = 0;
+    public HealthBar healthBar;
     public BoxCollider boxCollider;
     public MeshRenderer _Renderer;
+    BuiltBuilding BuiltBuilding;
+    // Building-specific data
+    public BuildingData _BuildingData;
+    public LayerMask TargetResource;
+    public LayerMask ObstacleMask;
+
+    // State tracking variables
     public bool preplacedBuilding;
     public bool IsValidLocation = true;
     bool isBuilt = false;
-    
-    public HealthBar healthBar;
+    List<GameObject> ResourceTargets = new List<GameObject>();
 
-    private void Awake()
-    {
-        currentHealth = _BuildingData.Health;
-        
-    }
+    // Health-related variables
+    public Vector3 PositionLastFrame;
+
+    // FlowField settings
+    public int influence = 5;
+
+
+
+
     private void Start()
     {
-        
-        if (preplacedBuilding) buildComplete();
+        BuiltBuilding = GetComponent<BuiltBuilding>();
+        if (_BuildingData.Produce != BuildingData.Produces.None)
+        {
+            ObstacleMask = LayerMask.GetMask("Mountain");
+            TargetResource = LayerMask.GetMask($"{_BuildingData.Produce}");
+            
+        }
+        if (preplacedBuilding)
+        {
+            ResourceAreaCheck();
+            buildComplete();
+        }
 
+    }
+
+    void ResourceAreaCheck() 
+    {
+        ResourceTargets.Clear();
+        if (PositionLastFrame != transform.position)
+        {
+            PositionLastFrame = transform.position;
+            
+            Debug.Log("Here");
+            
+            Collider[] targetsInView = Physics.OverlapSphere(transform.position, _BuildingData.ResourceRange, TargetResource);
+            foreach (Collider target in targetsInView)
+            {
+                if (!Physics.Raycast(transform.position, target.transform.position, Vector3.Distance(transform.position, target.transform.position), ObstacleMask))
+                {
+                    ResourceTargets.Add(target.gameObject);
+                }
+            }
+        }
     }
 
     void placeOnFlowField()
@@ -32,27 +77,30 @@ public class Building : MonoBehaviour
         manager = FlowFieldManager.Instance;
         manager.AddSecondaryTarget(this.transform, influence);
     }
+   
 
-
-    public void AdjustHealh(int healthChange)
-    {        
-        currentHealth = Mathf.Clamp(currentHealth + healthChange, 0, _BuildingData.Health) ;          
-        healthBar.setHealth((float)currentHealth / (float)_BuildingData.Health);
-        if (currentHealth < _BuildingData.Health) healthBar.displayHealthBar();
-        if (currentHealth == _BuildingData.Health) healthBar.hideHealthBar();        
+    private void FixedUpdate()
+    {
+        if (transform.position != PositionLastFrame) {
+            ResourceAreaCheck();
+        }
+        if (!isBuilt)
+        { 
+            SpawnValidation();
+        }
     }
 
-    private void Update()
+
+    public void SpawnValidation()
     {
-        if (!isBuilt)
-        {
+         
             int count = 0;
             Collider[] hit = Physics.OverlapBox(transform.position, boxCollider.size * 0.5f,transform.rotation);
             if (hit.Length > 0)
             {
                 foreach (Collider c in hit)
                 {
-                    if (c.gameObject.CompareTag("Building"))
+                    if (c.gameObject.CompareTag("Building") || c.gameObject.CompareTag("Resource"))
                     {
                         if (c != boxCollider && IsValidLocation)
                         {
@@ -71,9 +119,8 @@ public class Building : MonoBehaviour
                 }
             }
             
-        }
+        
     }
-
 
     public void buildComplete()
     {
@@ -81,10 +128,8 @@ public class Building : MonoBehaviour
         isBuilt = true;
         healthBar.hideHealthBar();
         placeOnFlowField();
+        BuiltBuilding.construct(manager,healthBar,_BuildingData,ResourceTargets, this);
     }
 
-    private void OnDestroy()
-    {
-       // manager.buildingDestroyed(transform, influence);
-    }
+    
 }
