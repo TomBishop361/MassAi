@@ -1,7 +1,5 @@
 
 using System.Collections.Generic;
-using Unity.Collections;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class FlowField
@@ -53,8 +51,7 @@ public class FlowField
 
 
     public void addSecondaryTarget(Vector3 position, int influence)
-    {
-        
+    {        
         secondaryTargets.Add(position);
 
         Cell[,] miniGrid;

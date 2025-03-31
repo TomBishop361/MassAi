@@ -1,11 +1,9 @@
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Unity.Burst;
 using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
+
 
 
 public class UnitController : MonoBehaviour
@@ -13,7 +11,7 @@ public class UnitController : MonoBehaviour
     public FlowFieldManager manager;
     public static UnitController Instance;
     public List<Unit> unitsInGame;
-    public float speed = 0.15f;
+    
 
     private void Awake()
     {
@@ -47,12 +45,13 @@ public class UnitController : MonoBehaviour
 
    
 
-    [BurstCompile]
+    //Maybe split into jobs or use intermittent thinkingsaw
     private void FixedUpdate()
     {
         if (manager.currentFlowField == null) {return; }
         foreach (Unit unit in unitsInGame) {
             if (!unit.gameObject.activeSelf) continue;
+            if (unit.state != 0) continue;
             Cell nodeBelow = manager.currentFlowField.GetCellFromWorldPos(unit.transform.position);
             //if is pushed into obstacle then it will follow direction of neighbour 
             if (nodeBelow.bestDirection == GridDirection.None)
@@ -60,7 +59,7 @@ public class UnitController : MonoBehaviour
                 nodeBelow = manager.currentFlowField.findNearestDirection(nodeBelow);
             }
             Vector3 moveDir = new Vector3(nodeBelow.bestDirection.x, 0, nodeBelow.bestDirection.y);
-            unit.agent.Move(moveDir*speed);
+            unit.agent.Move(moveDir* unit.unitData.moveSpeed);
             
             unit.transform.rotation = quaternion.LookRotation(moveDir, unit.transform.up);
         }

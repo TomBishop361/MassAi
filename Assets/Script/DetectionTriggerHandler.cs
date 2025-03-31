@@ -6,10 +6,10 @@ public class DetectionTriggerHandler : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(body.DetectionRange.Count < 5) body.DetectionRange.Add(other);
+        if(body.DetectionRange.Count < 5) body.DetectionRange.Add(other.gameObject);
     }
     private void OnTriggerExit(Collider other)
     {
-        if (body.DetectionRange.Count > 0) body.DetectionRange.Remove(other);
+        if (body.DetectionRange.Count > 0) body.DetectionRange.Remove(other.gameObject);
     }
 }
