@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -6,6 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
+[BurstCompile]
 public class PlayerControls : MonoBehaviour
 {
     [Header("Movement")]
@@ -15,17 +17,21 @@ public class PlayerControls : MonoBehaviour
     public CharacterController controller;
     public Animator animator;
     bool walking = false;
-    public Vector3[] AttackArchPos = new Vector3[4];
+    bool attacking = false;
     public LayerMask AttackMask;
+
     void OnMove(InputValue value)
     {
         DirectionInput = value.Get<Vector2>();
     }
     void OnAttack(InputValue value)
     {
-        animator.SetTrigger("AttackEnd");
-        animator.SetTrigger("Attack");
-        StartCoroutine(AttackAnim());
+        if (!attacking)
+        {
+            animator.SetTrigger("AttackEnd");
+            animator.SetTrigger("Attack");
+            StartCoroutine(AttackAnim());
+        }
     }
 
     void OnRun()
@@ -33,41 +39,74 @@ public class PlayerControls : MonoBehaviour
 
     }
 
+  
     IEnumerator AttackAnim()
-    {   
+    {
+        attacking = true;
+        AttackArch();
         while(animator.GetCurrentAnimatorStateInfo(1).IsName("cav_shield_04_attack"))
         {
+            
             yield return null;
-            if (animator.GetCurrentAnimatorStateInfo(1).normalizedTime > 0.25f && !animator.IsInTransition(0))
+            
+            if (animator.GetCurrentAnimatorStateInfo(1).normalizedTime == 1 && !animator.IsInTransition(0))
             {
-                //Damage();
-            }
-            if (animator.GetCurrentAnimatorStateInfo(1).normalizedTime > 1 && !animator.IsInTransition(0))
-            {
-                animator.SetTrigger("AttackEnd");                
+                animator.SetTrigger("AttackEnd");       
+                
             }
         }
+        attacking = false;
     }
 
-    IEnumerator AttackArch()
+#if UNITY_EDITOR
+    public bool DisplayArchDebug = false;
+    private void OnDrawGizmos()
     {
-        yield return new WaitForSeconds(0.15f);
+        if (DisplayArchDebug)
+        {
+            Vector3 ArchPosA = (transform.position + (Vector3)DirFromAngle(-45, false) * 1.7f);
+            Vector3 ArchPosB = (transform.position + (Vector3)DirFromAngle(45, false) * 1.7f);
+            Vector3 ArchPosC = (transform.position + (Vector3)DirFromAngle(-20, false) * 1.7f);
+            Vector3 ArchPosD = (transform.position + (Vector3)DirFromAngle(20, false) * 1.7f);
+
+            Gizmos.DrawSphere(ArchPosA, 0.7f);
+            Gizmos.DrawSphere(ArchPosB, 0.7f);
+            Gizmos.DrawSphere(ArchPosC, 0.7f);
+            Gizmos.DrawSphere(ArchPosD, 0.7f);
+        }
+    }
+#endif
+
+    public void AttackArch()
+    {        
         Vector3 ArchPosA = (transform.position + (Vector3)DirFromAngle(-45, false) * 1.7f);
         Vector3 ArchPosB = (transform.position + (Vector3)DirFromAngle(45, false) * 1.7f);
         Vector3 ArchPosC = (transform.position + (Vector3)DirFromAngle(-20, false) * 1.7f);
         Vector3 ArchPosD = (transform.position + (Vector3)DirFromAngle(20, false) * 1.7f);
-        Collider[] HitEnemies = new Collider[10];
-        Physics.OverlapBoxNonAlloc(ArchPosA, Vector3.one * 0.85f, HitEnemies);
-        Physics.OverlapBoxNonAlloc(ArchPosB, Vector3.one * 0.85f, HitEnemies);
-        Physics.OverlapBoxNonAlloc(ArchPosC, Vector3.one * 0.85f, HitEnemies);
-        Physics.OverlapBoxNonAlloc(ArchPosD, Vector3.one * 0.85f, HitEnemies);
+        List<GameObject> enemiesHit = new List<GameObject>();
+        Collider[] HitEnemies = new Collider[5];
         
-        foreach(Collider c in HitEnemies)
-        {
-            if (c != null) Debug.Log(c.gameObject.name);
-        }
-
+        Physics.OverlapSphereNonAlloc(ArchPosA, 1.7f, HitEnemies,AttackMask);
+        enemiesHit.AddAllCollidersToList(HitEnemies); 
+        Physics.OverlapSphereNonAlloc(ArchPosB, 1.7f, HitEnemies, AttackMask);
+        enemiesHit.AddAllCollidersToList(HitEnemies);
+        Physics.OverlapSphereNonAlloc(ArchPosC, 1.7f, HitEnemies, AttackMask);
+        enemiesHit.AddAllCollidersToList(HitEnemies);
+        Physics.OverlapSphereNonAlloc(ArchPosD, 1.7f, HitEnemies, AttackMask);
+        enemiesHit.AddAllCollidersToList(HitEnemies);
+        
+        ApplyDamage(enemiesHit);
     }  
+
+    public void ApplyDamage(List<GameObject> HitTargets)
+    {
+        
+        foreach (GameObject Target in HitTargets)
+        {
+            Debug.Log(Target);
+            Target.SendMessage("AdjustHealth", -2,SendMessageOptions.DontRequireReceiver);
+        }
+    }
 
     [BurstCompile]
     public float3 DirFromAngle(float angleInDeg, bool isGlobalAngle)
@@ -113,5 +152,7 @@ public class PlayerControls : MonoBehaviour
     void rotate(Vector3 move)
     {
         transform.rotation = Quaternion.LookRotation(move, transform.up);
+        
     }
 }
+

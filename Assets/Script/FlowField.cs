@@ -182,7 +182,7 @@ public class FlowField
             List<Cell> currentNeighbors = GetNeighborCells(current.gridIndex, GridDirection.CardinalDirections, _grid, _gridSize);
             foreach (Cell currentNeighbor in currentNeighbors)
             {
-                if (currentNeighbor.cost == byte.MaxValue) { continue; }
+                if (currentNeighbor.cost == byte.MaxValue)  continue; 
                 if (currentNeighbor.cost + current.bestCost < currentNeighbor.bestCost)
                 {
                     currentNeighbor.bestCost = (ushort)(currentNeighbor.cost + current.bestCost);
@@ -198,7 +198,7 @@ public class FlowField
         
         foreach (Cell current in _grid)
         {
-            if (current.cost == byte.MaxValue) { continue; }
+            if (current.cost == byte.MaxValue) continue; 
             List<Cell> currentNeighbors = GetNeighborCells(current.gridIndex, GridDirection.AllDirections,_grid, _gridSize);
 
             int bestCost = current.bestCost;

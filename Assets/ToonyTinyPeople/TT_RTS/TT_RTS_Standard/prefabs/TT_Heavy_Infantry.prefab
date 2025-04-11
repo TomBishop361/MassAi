@@ -676,9 +676,9 @@ GameObject:
   - component: {fileID: 9509498}
   - component: {fileID: 4135534708184141980}
   - component: {fileID: 4686129836957331822}
-  - component: {fileID: 1643736409985143103}
+  - component: {fileID: 6377680012903832218}
   - component: {fileID: 1645819482560503004}
-  - component: {fileID: 1141286033880555361}
+  - component: {fileID: 876765156434939104}
   m_Layer: 0
   m_Name: TT_Heavy_Infantry
   m_TagString: Untagged
@@ -771,7 +771,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1643736409985143103
+--- !u!114 &6377680012903832218
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -780,10 +780,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 150198}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6795819f13b44784988f2736c46b39f4, type: 3}
+  m_Script: {fileID: 11500000, guid: cd623b30f1a972142a552ae5c4c6946b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 1764405781991921451}
+  maxHealth: 0
+  currentHealth: 0
+  healthBar: {fileID: 241872091248969095}
 --- !u!114 &1645819482560503004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -797,13 +799,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 4686129836957331822}
-  demoTarget: {fileID: 0}
   unitData: {fileID: 11400000, guid: 5356a12496360f149a1d96b3300e9c32, type: 2}
+  Target: {fileID: 0}
   MeleeRangeCheck: []
   DetectionRange: []
-  healthBar: {fileID: 1643736409985143103}
+  healthBar: {fileID: 241872091248969095}
+  Attacking: 0
+  animator: {fileID: 9509498}
   state: 0
---- !u!54 &1141286033880555361
+  currentHealth: 0
+--- !u!54 &876765156434939104
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -812,7 +817,7 @@ Rigidbody:
   m_GameObject: {fileID: 150198}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 100
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -828,7 +833,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 16
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!1 &150686
 GameObject:
@@ -1245,12 +1250,12 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 179750}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
+  m_DynamicOccludee: 0
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
+  m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 3
   m_RayTraceProcedural: 0
@@ -1282,9 +1287,9 @@ SkinnedMeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   serializedVersion: 2
-  m_Quality: 0
+  m_Quality: 1
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
+  m_SkinnedMotionVectors: 0
   m_Mesh: {fileID: 4300864, guid: 02ded044b8e0963439276550f50be6f9, type: 3}
   m_Bones:
   - {fileID: 450864}
@@ -1708,7 +1713,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1.52
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4933471745849098427
 MonoBehaviour:
@@ -1768,7 +1773,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1518585728599114687, guid: 18e325473acb5b14c80aced189befb0f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2507762236806587423, guid: 18e325473acb5b14c80aced189befb0f, type: 3}
       propertyPath: m_SizeDelta.x
@@ -1931,15 +1936,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25ebbf759c9441748b23304b81294363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1764405781991921451 stripped
+--- !u!114 &241872091248969095 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1125249046731635749, guid: 18e325473acb5b14c80aced189befb0f, type: 3}
+  m_CorrespondingSourceObject: {fileID: 1493665503660928649, guid: 18e325473acb5b14c80aced189befb0f, type: 3}
   m_PrefabInstance: {fileID: 1720900341568842510}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 212447716497680561}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 6795819f13b44784988f2736c46b39f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &2361080458094983312 stripped

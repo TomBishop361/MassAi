@@ -2,24 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class BuiltBuilding : MonoBehaviour
 {
     FlowFieldManager manager;
     ResourceManager managerResource;
-    HealthBar healthBar;
+    public Health health;
     BuildingData buildingData;
     public List<GameObject> validTargets = new List<GameObject>();    
-    int currentHealth = 0;
+    
 
-    public void construct(FlowFieldManager _manager, HealthBar _healthBar, BuildingData _buildingData, List<GameObject> _validTargets,Building buildingScript)
+    public void construct(FlowFieldManager _manager, BuildingData _buildingData, List<GameObject> _validTargets,Building buildingScript)
     {
         manager = _manager;
-        healthBar = _healthBar; 
+        health._maxHealth = _buildingData.Health;
         buildingData = _buildingData;
         foreach (GameObject target in _validTargets) { 
             validTargets.Add(target);
         }
-        currentHealth = buildingData.Health;
+        health.healthDepleted += buildingDestroyed;
         Destroy(buildingScript);
         managerResource = ResourceManager.Instance;
         if (buildingData.Produce != BuildingData.Produces.None && validTargets.Count> 0)
@@ -37,16 +38,15 @@ public class BuiltBuilding : MonoBehaviour
         }
     }
 
-    public void AdjustHealh(int healthChange)
-    {
-        currentHealth = Mathf.Clamp(currentHealth + healthChange, 0, buildingData.Health);
-        healthBar.setHealth((float)currentHealth / (float)buildingData.Health);
-        if (currentHealth < buildingData.Health) healthBar.displayHealthBar();
-        if (currentHealth == buildingData.Health) healthBar.hideHealthBar();
-    }
 
-    private void OnDestroy()
+    void buildingDestroyed()
     {
+        Destroy(gameObject);
+    }
+    private void OnDisable()
+    {
+        health.healthDepleted -= buildingDestroyed;
         // manager.buildingDestroyed(transform, influence);
     }
+    
 }

@@ -11,7 +11,7 @@ public class Building : MonoBehaviour
 {
     // References to other components or managers
     public FlowFieldManager manager;
-    public HealthBar healthBar;
+    
     public BoxCollider boxCollider;
     public MeshRenderer _Renderer;
     BuiltBuilding BuiltBuilding;
@@ -143,9 +143,9 @@ public class Building : MonoBehaviour
         _Renderer.GetMaterials(materials);
         materials[1].SetFloat("_IsBuilt", 1);
         isBuilt = true;
-        healthBar.hideHealthBar();
+        
         placeOnFlowField();
-        BuiltBuilding.construct(manager,healthBar,_BuildingData,ResourceTargets, this);
+        BuiltBuilding.construct(manager,_BuildingData,ResourceTargets, this);
     }
 
     
