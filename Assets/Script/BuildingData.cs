@@ -7,6 +7,8 @@ public class BuildingData : ScriptableObject
 
     public string BuildingName;
 
+    public int influence;
+
     public RecourseCost Cost;
 
     public SecondRecourceCost SecondaryCost;

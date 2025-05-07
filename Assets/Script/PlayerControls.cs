@@ -103,7 +103,7 @@ public class PlayerControls : MonoBehaviour
         
         foreach (GameObject Target in HitTargets)
         {
-            Debug.Log(Target);
+           // Debug.Log(Target);
             Target.SendMessage("AdjustHealth", -2,SendMessageOptions.DontRequireReceiver);
         }
     }

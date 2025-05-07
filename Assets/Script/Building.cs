@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
+[RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(BuiltBuilding))]
 public class Building : MonoBehaviour
 {
@@ -30,7 +32,7 @@ public class Building : MonoBehaviour
     public Vector3 PositionLastFrame;
 
     // FlowField settings
-    public int influence = 5;
+    
 
 
 
@@ -70,6 +72,7 @@ public class Building : MonoBehaviour
                         if (!Physics.Raycast(transform.position, target.transform.position, Vector3.Distance(transform.position, target.transform.position), ObstacleMask))
                         {
                             ResourceTargets.Add(target.gameObject);
+                          
                         }
                     }
                 }
@@ -80,7 +83,7 @@ public class Building : MonoBehaviour
     void placeOnFlowField()
     {
         manager = FlowFieldManager.Instance;
-        manager.AddSecondaryTarget(this.transform, influence);
+        manager.AddSecondaryTarget(this.transform, _BuildingData.influence);
     }
    
 
@@ -148,5 +151,14 @@ public class Building : MonoBehaviour
         BuiltBuilding.construct(manager,_BuildingData,ResourceTargets, this);
     }
 
-    
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        boxCollider = GetComponent<BoxCollider>();  
+        _Renderer = GetComponent<MeshRenderer>();
+        
+    }
+#endif
+
 }

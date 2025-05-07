@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class FlowField
 {
@@ -88,35 +89,36 @@ public class FlowField
 
 
     public void removeSecondaryTarget(Vector3 position, int radius)
-    {        
-        int index = 0;
-        //remove self from list of target
-        if (secondaryTargets.Contains(position))
+    {   
+        if (!secondaryTargets.Contains(position)) return;
+
+        //iterate over grid in influence and restore to original grid.
+        Vector2 pos = getCellIndexFromWorldPos(position) - new Vector2(radius, radius);
+        for (int x = 0; x < radius*2; x++)
         {
-            index = secondaryTargets.IndexOf(position);
-            secondaryTargets.RemoveAt(index);
+            for(int y = 0;y < radius*2; y++)
+            {                
+                CurrentGrid[(int)pos.x,(int)pos.y].bestDirection = MainGrid[(int)pos.x, (int)pos.y].bestDirection;
+                pos = pos + new Vector2(0, 1);
+            }
+            pos = pos + new Vector2(1, -radius * 2);
         }
 
-        
-        //iterate over grid in influence and restore to original grid.
-        for (int x = 0; x < secondaryTargets[index].x; x++)
-        {
-            for(int y = 0;y < secondaryTargets[index].y; y++)
-            {
-                Vector2 pos = getCellIndexFromWorldPos(position) - new Vector2(radius, radius);
-                CurrentGrid[(int)pos.x,(int)pos.y].bestDirection = MainGrid[(int)pos.x, (int)pos.y].bestDirection;
-            }
-        }
+        //Remove From both lists
+        int index = secondaryTargets.IndexOf(position);
+        secondaryTargets.RemoveAt(index);
         secondaryInfluence.RemoveAt(index);
+
         // Go through buildings within range and recalculate their flow
         foreach(Vector3 target in secondaryTargets)
         {
-            if((position-target).sqrMagnitude> 2*(radius * radius))
+            if((position-target).sqrMagnitude < (12 * 12)*2) //This should be compared to the highest radius building^2 * 2 (atm this is 12^2 * 2)
             {
                 int targetIndex = secondaryTargets.IndexOf(target);
                 addGridLayer(secondaryInfluence[targetIndex], target, radius);
             }
-        }        
+        }
+        
     }
 
 

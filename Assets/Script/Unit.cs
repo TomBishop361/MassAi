@@ -20,7 +20,12 @@ public class Unit : MonoBehaviour
     public int state = 0; // 0 = walking 1 = chasing 2 = attacking 3 = Dead
     
 
-    public GameObject _Target { get { return _Target; } set { Target = value; if (value != null) { state = 2; Attack(); } } }
+    public GameObject _Target { get { return _Target; } set { Target = value; 
+            if (value != null) {
+                state = 2; Attack();
+            } else { state = 0; }
+        }
+    }
     delegate void AnimFinished();
 
     #region Attack Procedure
@@ -100,10 +105,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-
-    }
+  
 
     private void OnEnable()
     {

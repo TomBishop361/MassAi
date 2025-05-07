@@ -783,8 +783,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd623b30f1a972142a552ae5c4c6946b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 0
-  currentHealth: 0
   healthBar: {fileID: 241872091248969095}
 --- !u!114 &1645819482560503004
 MonoBehaviour:
@@ -799,15 +797,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 4686129836957331822}
-  unitData: {fileID: 11400000, guid: 5356a12496360f149a1d96b3300e9c32, type: 2}
+  unitData: {fileID: 11400000, guid: a93c7623d42cda2448c6856e9c89c25b, type: 2}
   Target: {fileID: 0}
   MeleeRangeCheck: []
   DetectionRange: []
-  healthBar: {fileID: 241872091248969095}
   Attacking: 0
   animator: {fileID: 9509498}
+  health: {fileID: 6377680012903832218}
   state: 0
-  currentHealth: 0
 --- !u!54 &876765156434939104
 Rigidbody:
   m_ObjectHideFlags: 0

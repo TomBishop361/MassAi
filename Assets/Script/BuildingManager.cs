@@ -28,9 +28,8 @@ public class BuildingManager : MonoBehaviour
     public void Build( int buildingIndx)
     {
         ClearCurrentBuilding();
-        SelectBuilding = BuildingPrefabs[buildingIndx];
-        CurrentBuildGO = Instantiate(SelectBuilding, Vector3.zero, Quaternion.identity);
-        CurrentBuildGO.transform.eulerAngles += new Vector3(-90, 0, 0);
+        SelectBuilding = BuildingPrefabs[buildingIndx];        
+        CurrentBuildGO = Instantiate(SelectBuilding);                
         CurrentBuilding = CurrentBuildGO.GetComponent<Building>();
         isBuilding = true;
     }

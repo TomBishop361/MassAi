@@ -12,3 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0339d58999efa634781d0063df3cdfd2, type: 3}
   m_Name: Farm
   m_EditorClassIdentifier: 
+  Health: 100
+  BuildingName: Farm
+  influence: 12
+  Cost: 0
+  SecondaryCost: 0
+  Produce: 4
+  ResourceRange: 12
+  productionSpeed: 1

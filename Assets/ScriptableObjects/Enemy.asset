@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0339d58999efa634781d0063df3cdfd2, type: 3}
-  m_Name: TestData
+  m_Script: {fileID: 11500000, guid: 35466cc024c21df458665c0904c04a23, type: 3}
+  m_Name: Enemy
   m_EditorClassIdentifier: 
-  Health: 100
-  BuildingName: TestBuilding
-  Cost: 0
-  SecondaryCost: 0
-  Produce: 4
-  ResourceRange: 12
-  productionSpeed: 1
+  Health: 10
+  moveSpeed: 0.15
+  attackSpeed: 1
+  damage: 1
+  UnitType: 2
+  Team: 1

@@ -1,5 +1,6 @@
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class FlowFieldManager : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class FlowFieldManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(this);
     }
+
+    
 
    
     private void Start()
@@ -38,6 +41,7 @@ public class FlowFieldManager : MonoBehaviour
     public void buildingDestroyed(Transform pos, int influence)
     {        
         currentFlowField.removeSecondaryTarget(pos.position,influence);
+        
     }
 
    

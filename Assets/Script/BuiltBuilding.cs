@@ -46,7 +46,8 @@ public class BuiltBuilding : MonoBehaviour
     private void OnDisable()
     {
         health.healthDepleted -= buildingDestroyed;
-        // manager.buildingDestroyed(transform, influence);
+        manager.buildingDestroyed(transform, buildingData.influence);
+        
     }
     
 }

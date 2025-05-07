@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 8976745272661144094}
   - component: {fileID: 8094235527816968084}
   - component: {fileID: 9210589799963742113}
+  - component: {fileID: 7621693545595041223}
+  - component: {fileID: 936514492539782890}
   m_Layer: 2
   m_Name: House
   m_TagString: Building
@@ -104,13 +106,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
-  influence: 12
-  _BuildingData: {fileID: 11400000, guid: ce6ef78238caae441be1f29ebaea48b8, type: 2}
   boxCollider: {fileID: 9210589799963742113}
   _Renderer: {fileID: 7660169981555783281}
+  _BuildingData: {fileID: 11400000, guid: 413b87e656674a8468accf633aae48a3, type: 2}
+  TargetResource:
+    serializedVersion: 2
+    m_Bits: 0
+  ObstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
   preplacedBuilding: 0
   IsValidLocation: 1
-  healthBar: {fileID: 6800549643355107216}
+  PositionLastFrame: {x: 0, y: 0, z: 0}
 --- !u!208 &8094235527816968084
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -148,6 +155,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.3737526, y: 4.4860134, z: 4.5487432}
   m_Center: {x: -0.08843386, y: 0.05178988, z: 1.436416}
+--- !u!114 &7621693545595041223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887627843143906728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25270abe335f2c6459ac5132c1d17514, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: {fileID: 936514492539782890}
+  validTargets: []
+--- !u!114 &936514492539782890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887627843143906728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd623b30f1a972142a552ae5c4c6946b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 6800549643355107216}
 --- !u!1001 &5393895092620738841
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -159,6 +193,10 @@ PrefabInstance:
     - target: {fileID: 1518585728599114687, guid: 18e325473acb5b14c80aced189befb0f, type: 3}
       propertyPath: m_Name
       value: HealthBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 1518585728599114687, guid: 18e325473acb5b14c80aced189befb0f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3973832475176670110, guid: 18e325473acb5b14c80aced189befb0f, type: 3}
       propertyPath: m_Pivot.x

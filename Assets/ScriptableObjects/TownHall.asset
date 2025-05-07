@@ -12,3 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0339d58999efa634781d0063df3cdfd2, type: 3}
   m_Name: TownHall
   m_EditorClassIdentifier: 
+  Health: 200
+  BuildingName: TownHall
+  influence: 1
+  Cost: 0
+  SecondaryCost: 0
+  Produce: 5
+  ResourceRange: 0
+  productionSpeed: 0

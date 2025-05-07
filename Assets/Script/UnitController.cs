@@ -68,8 +68,8 @@ public class UnitController : MonoBehaviour
 
                     unit.transform.rotation = quaternion.LookRotation(moveDir, unit.transform.up);
                     break;
-                case 1: // chasing
-
+                case 2: // chasing
+                    if (unit.Target == null) unit.state = 0;
                     break;
 
                
