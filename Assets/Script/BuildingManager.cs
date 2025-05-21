@@ -15,6 +15,7 @@ public class BuildingManager : MonoBehaviour
 
     GameObject CurrentBuildGO;
     Building CurrentBuilding;
+    int CurrentbuildIndx = 0;
 
     public GraphicRaycaster GRayCast;
     public EventSystem _eventSystem;
@@ -27,7 +28,8 @@ public class BuildingManager : MonoBehaviour
 
     public void Build(int buildingIndx)
     {
-        ClearCurrentBuilding();
+        ClearCurrentBuilding(); 
+        CurrentbuildIndx = buildingIndx;
         SelectBuilding = BuildingPrefabs[buildingIndx];
         CurrentBuildGO = Instantiate(SelectBuilding);
         CurrentBuilding = CurrentBuildGO.GetComponent<Building>();
@@ -40,7 +42,7 @@ public class BuildingManager : MonoBehaviour
         CurrentBuildGO.transform.position = pos;
         CurrentBuilding.buildComplete();
         CurrentBuildGO = null;
-        CurrentBuilding = null;
+        CurrentBuilding = null;        
     }
 
     void ClearCurrentBuilding()
@@ -64,6 +66,7 @@ public class BuildingManager : MonoBehaviour
             }
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
+
 
             m_PointerEventData = new PointerEventData(_eventSystem);
             m_PointerEventData.position = Input.mousePosition;

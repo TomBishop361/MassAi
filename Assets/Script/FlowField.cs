@@ -104,8 +104,10 @@ public class FlowField
         for (int x = 0; x < radius*2; x++)
         {
             for(int y = 0;y < radius*2; y++)
-            {                
-                CurrentGrid[(int)pos.x,(int)pos.y].bestDirection = MainGrid[(int)pos.x, (int)pos.y].bestDirection;
+            {
+                Cell CurrentCell = CurrentGrid[(int)pos.x, (int)pos.y];
+                CurrentCell.bestDirection = MainGrid[(int)pos.x, (int)pos.y].bestDirection;
+                CurrentCell.weight = float.MinValue;
                 pos = pos + new Vector2(0, 1);
             }
             pos = pos + new Vector2(1, -radius * 2);
