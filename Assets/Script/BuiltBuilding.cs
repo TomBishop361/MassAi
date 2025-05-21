@@ -9,7 +9,7 @@ public class BuiltBuilding : MonoBehaviour
     ResourceManager managerResource;
     public Health health;
     BuildingData buildingData;
-    public List<GameObject> validTargets = new List<GameObject>();    
+    public List<GameObject> validTargets = new List<GameObject>();   
     
 
     public void construct(FlowFieldManager _manager, BuildingData _buildingData, List<GameObject> _validTargets,Building buildingScript)
@@ -23,9 +23,17 @@ public class BuiltBuilding : MonoBehaviour
         health.healthDepleted += buildingDestroyed;
         Destroy(buildingScript);
         managerResource = ResourceManager.Instance;
-        if (buildingData.Produce != BuildingData.Produces.None && validTargets.Count> 0)
-        {            
-            StartCoroutine(ProduceResource());            
+        if (buildingData.Produce != BuildingData.Produces.None && validTargets.Count > 0)
+        {
+            StartCoroutine(ProduceResource());
+        }
+        else if (buildingData.Produce == BuildingData.Produces.Population)
+        {
+            managerResource.AdjustResource(5, $"{buildingData.Produce}");
+        }
+        else if (buildingData.Produce == BuildingData.Produces.Food)
+        {
+            StartCoroutine(ProduceResource());
         }
     }
 
@@ -38,7 +46,6 @@ public class BuiltBuilding : MonoBehaviour
         }
     }
 
-
     void buildingDestroyed()
     {
         Destroy(gameObject);
@@ -49,5 +56,16 @@ public class BuiltBuilding : MonoBehaviour
         manager.buildingDestroyed(transform, buildingData.influence);
         
     }
-    
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (GetComponent<Health>() != null)
+        {
+            health = GetComponent<Health>();            
+        }
+    }
+
+#endif
+
 }

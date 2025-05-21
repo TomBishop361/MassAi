@@ -115,19 +115,25 @@ public class Building : MonoBehaviour
 
                     if (c.gameObject.CompareTag("Building") || c.gameObject.CompareTag("Resource"))
                     {
-                        if (c != boxCollider && IsValidLocation)
+                        if (c != boxCollider)
                         {
-
-                            IsValidLocation = false;
-                            List<Material> materials = new List<Material>();
-                            _Renderer.GetMaterials(materials);
-                            materials[1].SetColor("_OutlineColour", new Color(1, 0, 0));
+                            count++;    
+                            if (IsValidLocation)
+                            {
+                                IsValidLocation = false;
+                                List<Material> materials = new List<Material>();
+                                _Renderer.GetMaterials(materials);
+                                materials[1].SetColor("_OutlineColour", new Color(1, 0, 0));
+                            }
+                            
                         }
-                        count++;
+                        
+
                     }
 
                 }
-                if (count == 1 && !IsValidLocation)
+                
+                if (count == 0 && !IsValidLocation)
                 {
                     List<Material> materials = new List<Material>();
                     _Renderer.GetMaterials(materials);

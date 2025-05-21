@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 1060698811615288752}
   - component: {fileID: 3764411984167006274}
   - component: {fileID: 924606255432187850}
-  - component: {fileID: 5711547735229201069}
   - component: {fileID: 6780441251487207042}
   - component: {fileID: 227469483892236304}
   m_Layer: 2
@@ -110,7 +109,7 @@ MonoBehaviour:
   manager: {fileID: 0}
   boxCollider: {fileID: 3764411984167006274}
   _Renderer: {fileID: 8941716509292987247}
-  _BuildingData: {fileID: 11400000, guid: ce6ef78238caae441be1f29ebaea48b8, type: 2}
+  _BuildingData: {fileID: 11400000, guid: 65946b0ac816ddc40834404e78cce9dd, type: 2}
   TargetResource:
     serializedVersion: 2
     m_Bits: 0
@@ -171,33 +170,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: {fileID: 227469483892236304}
   validTargets: []
---- !u!54 &5711547735229201069
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2459568519483750435}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 1
-  m_Constraints: 126
-  m_CollisionDetection: 1
 --- !u!65 &6780441251487207042
 BoxCollider:
   m_ObjectHideFlags: 0

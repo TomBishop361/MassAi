@@ -39,6 +39,11 @@ public class PlayerControls : MonoBehaviour
 
     }
 
+    void OnRotate()
+    {
+
+    }
+
   
     IEnumerator AttackAnim()
     {

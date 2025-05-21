@@ -741,7 +741,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 131072
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -1704,7 +1704,7 @@ SphereCollider:
     m_Bits: 98308
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 32691
+    m_Bits: 163763
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

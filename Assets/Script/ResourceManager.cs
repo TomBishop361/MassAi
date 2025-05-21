@@ -4,17 +4,17 @@ using UnityEngine;
 public class ResourceManager : MonoBehaviour
 {
     public static ResourceManager Instance;
-    int Food;
+    public int Food;
     public TextMeshProUGUI FoodText;
-    int Gold;
+    public int Gold;
     public TextMeshProUGUI GoldText;
-    int Metal;
+    public int Metal;
     public TextMeshProUGUI MetalText;
     public int Wood;
     public TextMeshProUGUI WoodText;
-    int Stone;
+    public int Stone;
     public TextMeshProUGUI StoneText;
-    int Population;
+    public int Population;
     public int PopulationCap;
     public TextMeshProUGUI PopulationText;
 

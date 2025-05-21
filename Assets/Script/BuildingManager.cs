@@ -25,11 +25,11 @@ public class BuildingManager : MonoBehaviour
         manager = FlowFieldManager.Instance;
     }
 
-    public void Build( int buildingIndx)
+    public void Build(int buildingIndx)
     {
         ClearCurrentBuilding();
-        SelectBuilding = BuildingPrefabs[buildingIndx];        
-        CurrentBuildGO = Instantiate(SelectBuilding);                
+        SelectBuilding = BuildingPrefabs[buildingIndx];
+        CurrentBuildGO = Instantiate(SelectBuilding);
         CurrentBuilding = CurrentBuildGO.GetComponent<Building>();
         isBuilding = true;
     }
@@ -40,7 +40,7 @@ public class BuildingManager : MonoBehaviour
         CurrentBuildGO.transform.position = pos;
         CurrentBuilding.buildComplete();
         CurrentBuildGO = null;
-        CurrentBuilding = null; 
+        CurrentBuilding = null;
     }
 
     void ClearCurrentBuilding()
@@ -58,6 +58,10 @@ public class BuildingManager : MonoBehaviour
 
         if (isBuilding)
         {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                CurrentBuildGO.transform.eulerAngles += Vector3.up * 90;
+            }
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -68,24 +72,23 @@ public class BuildingManager : MonoBehaviour
             if (results.Count > 0) CurrentBuilding.IsValidLocation = false;
 
             Physics.Raycast(ray, out hit, float.MaxValue);
-            Debug.DrawRay(ray.origin, hit.point * 100);
             Vector3 CellPos = manager.currentFlowField.GetCellFromWorldPos(hit.point).worldPos;
-            CurrentBuildGO.transform.position = CellPos;            
+
+            CurrentBuildGO.transform.position = CellPos;
 
             if (Input.GetMouseButtonDown(0) && CurrentBuilding.IsValidLocation)
-            {//change to place building at mouse position                    
-
-                createBuilding(hit.point);
+            {//change to place building at mouse position                                   
+                createBuilding(CellPos);
                 isBuilding = false;
             }
-            
-        
-        //create 2nd input to select building and remove it 
-        if (Input.GetMouseButtonDown(1))
-        {
-            ClearCurrentBuilding();
 
-        }
+
+            //create 2nd input to select building and remove it 
+            if (Input.GetMouseButtonDown(1))
+            {
+                ClearCurrentBuilding();
+            }
         }
     }
 }
+

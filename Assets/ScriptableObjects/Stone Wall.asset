@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0339d58999efa634781d0063df3cdfd2, type: 3}
-  m_Name: Farm
+  m_Name: Stone Wall
   m_EditorClassIdentifier: 
-  Health: 100
-  BuildingName: Farm
-  influence: 12
+  Health: 200
+  BuildingName: Stone Wall
+  influence: 3
   Cost: 0
   SecondaryCost: 0
-  Produce: 1
+  Produce: 0
   ResourceRange: 0
-  productionSpeed: 1
+  productionSpeed: 0

@@ -17,13 +17,13 @@ public class Unit : MonoBehaviour
     public bool Attacking = false;
     [SerializeField] Animator animator;
     public Health health;
-    public int state = 0; // 0 = walking 1 = chasing 2 = attacking 3 = Dead
+    public int state = 0; // 0 = walking; 1 = chasing; 2 = attacking; 3 = Dead;
     
 
     public GameObject _Target { get { return _Target; } set { Target = value; 
             if (value != null) {
                 state = 2; Attack();
-            } else { state = 0; }
+            } else { state = 0; Attacking = false; }
         }
     }
     delegate void AnimFinished();
@@ -38,6 +38,11 @@ public class Unit : MonoBehaviour
             Attacking = true;
             animator.SetTrigger("Attack");
         }
+        else
+        {
+            state=0; Attacking = false;
+        }
+        
     }
 
     //Attack Cooldown
@@ -52,8 +57,8 @@ public class Unit : MonoBehaviour
     //Called by Animation Event
     void ApplyDamage()
     {
-        if (Target == null) { state = 0; return; }
-        Target.GetComponent<Health>().AdjustHealth((int)-unitData.damage);
+        if(Target != null) Target.GetComponent<Health>().AdjustHealth((int)-unitData.damage);
+        state = 0;                         
         StartCoroutine(AttackTimer());
 
     }
@@ -75,8 +80,7 @@ public class Unit : MonoBehaviour
         if (Target == null)
         {
             _Target = targetObject;
-
-
+            return;
         }
         MeleeRangeCheck.Add(targetObject);
     }
@@ -88,6 +92,7 @@ public class Unit : MonoBehaviour
         {
             StopCoroutine(AttackTimer());
             _Target = null;
+            Attacking=false;                
         }
         MeleeRangeCheck.Remove(targetObject);
         CheckForNextTarget();

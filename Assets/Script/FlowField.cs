@@ -79,7 +79,14 @@ public class FlowField
 
                 if (minigrid[x, y].cost != 255)
                 {
-                    CurrentGrid[(int)Pos.x, (int)Pos.y].bestDirection = minigrid[x, y].bestDirection;    
+                    Cell currentgridcell = CurrentGrid[(int)Pos.x, (int)Pos.y];
+                    float infWeight = 1 - Vector3.Distance(position, currentgridcell.worldPos) / radius;
+                    if (infWeight > currentgridcell.weight)
+                    {                        
+                        currentgridcell.bestDirection = minigrid[x, y].bestDirection;
+                        currentgridcell.weight = infWeight;
+                    }                   
+                    
                 }
                 Pos = Pos+ new Vector2(0, 1);
             }
@@ -142,7 +149,7 @@ public class FlowField
     public void CreateCostField(Cell[,] _grid)
     {
         Vector3 cellHalfExtents = Vector3.one * cellRadius;
-        int terrainMask = LayerMask.GetMask("Impassible", "RoughTerrain", "Mountain","Wood");
+        int terrainMask = LayerMask.GetMask("Impassible", "RoughTerrain", "Mountain","Wood","Stone");
         foreach (Cell current in _grid)
         {
 
@@ -152,15 +159,18 @@ public class FlowField
             foreach (Collider col in obstacles)
             {
                 if(col == null) continue;
-                if (col.gameObject.layer == 8 || col.gameObject.layer == 7 || col.gameObject.layer == 14)
+                if (col.gameObject.layer == 8 || col.gameObject.layer == 7 || col.gameObject.layer == 14 )
                 {
                     current.IncreaseCost(255);
                     continue;
                 }
-                else if (!hasIncreasedCost && col.gameObject.layer == 9)
+                else if (!hasIncreasedCost)
                 {
-                    current.IncreaseCost(3);
-                    hasIncreasedCost = true;
+                    if (col.gameObject.layer == 9 || col.gameObject.layer == 17)
+                    {
+                        current.IncreaseCost(3);
+                        hasIncreasedCost = true;
+                    }
                 }
             }
         }
@@ -194,7 +204,7 @@ public class FlowField
         }
     }
 
-    //Time to Optimise
+    
     public void CreateFlowField(Cell[,] _grid, Vector2 _gridSize)
     {
         
@@ -311,6 +321,7 @@ public class Cell
         bestCost = ushort.MaxValue;
         bestDirection = GridDirection.None;
         isInfluenced = false;
+        weight = float.MinValue;
     }
 
     public void IncreaseCost(int amnt)
