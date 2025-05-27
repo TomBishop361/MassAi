@@ -678,6 +678,7 @@ GameObject:
   - component: {fileID: 4686129836957331822}
   - component: {fileID: 6377680012903832218}
   - component: {fileID: 1645819482560503004}
+  - component: {fileID: 2467665877926712380}
   - component: {fileID: 876765156434939104}
   m_Layer: 0
   m_Name: TT_Heavy_Infantry
@@ -791,9 +792,30 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 150198}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52d5c126777af0b45b60dc6c6a40ef3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 4686129836957331822}
+  unitData: {fileID: 11400000, guid: a93c7623d42cda2448c6856e9c89c25b, type: 2}
+  Target: {fileID: 0}
+  MeleeRangeCheck: []
+  DetectionRange: []
+  Attacking: 0
+  animator: {fileID: 9509498}
+  health: {fileID: 6377680012903832218}
+  state: 0
+--- !u!114 &2467665877926712380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e078430fb00e84d86a04914078f988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 4686129836957331822}

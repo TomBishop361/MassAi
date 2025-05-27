@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 200
   BuildingName: TownHall
-  influence: 1
+  influence: 12
   Cost: 0
   SecondaryCost: 0
   Produce: 5

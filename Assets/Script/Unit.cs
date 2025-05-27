@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Health))]
-public class Unit : MonoBehaviour
+public abstract class Unit : MonoBehaviour
 {
 
     public NavMeshAgent agent;
@@ -31,7 +31,7 @@ public class Unit : MonoBehaviour
     #region Attack Procedure
 
     //Initiate Attack procedure
-    void Attack()
+   internal virtual void Attack()
     {
         if (Target != null)
         {
@@ -65,7 +65,7 @@ public class Unit : MonoBehaviour
 
     #endregion
 
-    public void Perish()
+    internal virtual void Perish()
     {
         UnitController.Instance.RemoveUnitFromList(this);
         Destroy(gameObject);
