@@ -26,7 +26,7 @@ public abstract class Unit : MonoBehaviour
             } else { state = 0; Attacking = false; }
         }
     }
-    delegate void AnimFinished();
+    
 
     #region Attack Procedure
 
